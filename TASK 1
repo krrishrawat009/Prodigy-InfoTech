@@ -1,0 +1,55 @@
+import pandas as pd
+import random
+import string
+from getpass import getpass
+
+chars = " " + string.punctuation + string.digits + string.ascii_letters
+chars = list(chars)
+key = chars.copy()
+random.shuffle(key)
+
+
+def text():
+    while True:
+        wish_text = input("Enter your wish encrypt/decrypt: ")
+        
+        if wish_text == "encrypt":
+            # ENCRYPT
+            plain_text = getpass("Enter a message to encrypt: ")
+            cipher_text = ""
+
+            # Check if the file exists to add the header only once
+            try:
+                with open('Blackbox.csv', 'r') as f:
+                    file_exists = True
+            except FileNotFoundError:
+                file_exists = False
+
+            # Append data to the CSV file
+            with open('Blackbox.csv', 'a') as f:
+                if not file_exists:
+                    f.write("Entered Inputs\n")  # Add the title row if the file doesn't exist
+                f.write(plain_text + '\n')
+
+            for letter in plain_text:
+                index = chars.index(letter)
+                cipher_text += key[index]
+
+            print(f"Encrypted message: {cipher_text}")
+        
+        elif wish_text == "decrypt":
+            # DECRYPT
+            cipher_text = getpass("Enter a message to decrypt: ")
+            plain_text = ""
+
+            for letter in cipher_text:
+                index = key.index(letter)
+                plain_text += chars[index]
+
+            print(f"Original message: {plain_text}")
+        
+        k = input("Do you wish to continue (y/n): ")
+        if k.lower() == "n":
+            break
+
+text()
